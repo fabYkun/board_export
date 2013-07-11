@@ -7,7 +7,7 @@ Ces scripts utilisent l'api [Simple HTML DOM](http://simplehtmldom.sourceforge.n
 Pré-requis
 ------------
 
-Si vous n'avez jamais programmé avant cela risque d'être un peu dur mais si vous avez foi vous pourrez y arriver ^^. 
+Il est recommandé de savoir un minimum programmer car des modifications sont nécessaires au niveau du code, il n'est en effet pas adapté a tout type de forums. 
 Pour correctement fonctionner, l'importation des données nécessite deux variables, toutes deux sous la forme d'un tableau associatif. Nous avons en effet besoin d'un array reliant chaque membre à son identifiant de la nouvelle base de données et un array reliant chaque nom de forum à son identifiant également. 
 
 Afin de récupérer les utilisateurs de votre forum et, étant donné que vous n'avez pas accès à la bdd, il faut une liste qui comprend au moins les adresses emails et les pseudos. Sur forumactif une liste, fournissant également d'autres informations, est disponible en cliquant sur "Gestion des utilisateurs". Elle se présente sous cette forme :
