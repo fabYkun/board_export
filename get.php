@@ -30,7 +30,7 @@ else
 	$topic = array('id' => $topic['tid'], 'titre' => '', 'localisation' => 0, 'nb_messages' => 0, 'id_message_premier' => 0, 'pseudo_auteur_premier' => '', 'id_auteur_premier' => 0, 'date_auteur_premier' => 0, 'pseudo_auteur_dernier' => '', 'id_auteur_dernier' => 0, 'date_auteur_dernier' => 0);
 $y = 0;
 $post = null;
-$dir = 'topics/Nouveau dossier ('.$_GET['topic'].')/';
+$dir = $repertoire;
 if (is_dir($dir)) {
     if ($dh = opendir($dir)) {
         while (($file = readdir($dh)) !== false) {
