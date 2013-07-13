@@ -129,4 +129,5 @@ function html_to_bbcode($message){ // il faut peut-être modifier certains déta
 	$post['message'] = str_replace('</ul>', '[/list]', $post['message']);
 	$post['message'] = str_replace('</ol>', '[/list]', $post['message']);
 	$post['message'] = strip_tags($post['message'], '<br /><br/><br>');
+	return $post['message'];
 }
