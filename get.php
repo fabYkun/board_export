@@ -107,7 +107,7 @@ if (is_dir($dir)) {
 					    }
 
 					    $post['premierpost'] = 0;
-						if(isset($ancienpost)){ // c'est la première fois qu'on traite cette page
+						if(isset($ancienpost) || empty($topic['titre'])){ // c'est la première fois qu'on traite cette page
 						    $current_topic = trim($html->find('h1.cattitle', 0)->plaintext, "&nbsp; ");
 						    if(!empty($topic['titre']) && $current_topic != $topic['titre']){ // c'est n'est PAS une page d'un topic déjà existant, on envoi sur la bdd le topic puis on ré-initialise
 						    	$post['premierpost'] = 1;
@@ -142,6 +142,9 @@ if (is_dir($dir)) {
 			}
         }
         closedir($dh);
+        $topic['pseudo_auteur_dernier'] = $post['auteur'];
+	 	$topic['id_auteur_dernier'] = $post['id_membre'];
+	 	$topic['date_auteur_dernier'] = $post['date'];
         insert_topic($topic, $pdo);
     }
 }
