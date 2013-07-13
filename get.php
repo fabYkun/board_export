@@ -1,3 +1,4 @@
+<?php
 // Cela peut être utile de modifier le temps maximal d'execution d'un script car les données peuvent rapidement être nombreuses, enlevez le commentaire si nécessaire
 // set_time_limit(90); 
 
