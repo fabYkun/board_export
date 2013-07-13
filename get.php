@@ -1,5 +1,7 @@
 <?php
+$time_start = microtime(true);
 // Cela peut être utile de modifier le temps maximal d'execution d'un script car les données peuvent rapidement être nombreuses, enlevez le commentaire si nécessaire
+// Le temps d'execution sera affiché en bas
 // set_time_limit(90); 
 
 $host = ''; // l'adresse de votre serveur mysql
@@ -68,7 +70,7 @@ if (is_dir($dir)) {
 				}
 
 				if(!empty($localisation)){ // on ne peux pas ajouter qqch si on sait pas où le mettre =/
-					echo ' - Traitée<br /><br />';
+					echo ' - Traitée';
 					$ancienpost = $post; // on récupère le dernier post du dernier fichier
 
 					foreach($html->find('tr.post') as $message) {
@@ -114,6 +116,7 @@ if (is_dir($dir)) {
 	 							$topic['date_auteur_dernier'] = $ancienpost['date'];
 	 							// expédition sur la bdd du topic achevé
 						    	$topic['id'] = insert_topic($topic, $pdo) +1; // ne pas oublier que si la boucle n'est pas redémarrée (qu'on atteind la fin de la liste) il faudra quand même poster le topic !
+						    	echo 'Topic '.$topic['titre'].'<br />';
 						    }
 						    $post['premierpost'] = 1;
 						    // création du topic sur lequel on va travailler
@@ -142,4 +145,7 @@ if (is_dir($dir)) {
         insert_topic($topic, $pdo);
     }
 }
+$time_end = microtime(true);
+$time = $time_end - $time_start;
+echo 'Execute en '. substr($time, 0, 6) . ' secondes';
 ?>
