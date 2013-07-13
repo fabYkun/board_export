@@ -35,15 +35,15 @@ $y = 0;
 $post = null;
 $dir = $repertoire;
 if (is_dir($dir)) {
-    if ($dh = opendir($dir)) {
-        while (($file = readdir($dh)) !== false) {
-        	if ($file != '.' && $file != '..'){
-        		$localisation = null;
-        		$y ++;
-	            $html = file_get_html($dir.$file);
-	            echo ' - '.$file;
-	            
-	            $emplacement = $html->find('table#info_close', 0)->plaintext;
+	if ($dh = opendir($dir)) {
+		while (($file = readdir($dh)) !== false) {
+			if ($file != '.' && $file != '..'){
+				$localisation = null;
+				$y ++;
+				$html = file_get_html($dir.$file);
+				echo ' - '.$file;
+
+				$emplacement = $html->find('table#info_close', 0)->plaintext;
 				if(empty($emplacement)){ // ancienne méthode au cas où
 					$i = 0;
 					foreach($html->find('span.nav') as $categories){
@@ -75,78 +75,78 @@ if (is_dir($dir)) {
 
 					foreach($html->find('tr.post') as $message) {
 						$post = array();
-					    $post['auteur'] = trim($message->find('div.name', 0)->plaintext);
-					    if(isset($membres[$post['auteur']]))
-					    	$post['id_membre'] = $membres[$post['auteur']];
-					    else
-					    	$post['id_membre'] = 0; // il ne sera noté comme invité
+						$post['auteur'] = trim($message->find('div.name', 0)->plaintext);
+						if(isset($membres[$post['auteur']]))
+							$post['id_membre'] = $membres[$post['auteur']];
+						else
+							$post['id_membre'] = 0; // il ne sera noté comme invité
 
-					    $post['sujet'] = $message->find('tr td span.postdetails', 0)->plaintext;
+						$post['sujet'] = $message->find('tr td span.postdetails', 0)->plaintext;
 
-					    // il peut y avoir d'autres formats de dates, ici ce sont des dates du type Mer 12 Juin 2013 - 8:53
-					    if (preg_match('/[A-Za-z]{3,4} [0-9]{1,2} .{3,4} [0-9]{4} ?(-|,) [0-9]{1,2}:[0-9]{2}/', $post['sujet'], $match))
-					    	$post['date'] = $match[0];
-					    elseif(preg_match('/[A-Za-z]{3,4} [0-9]{1,2} .{3,4} ?(-|,) [0-9]{1,2}:[0-9]{2}/', $post['sujet'], $match)) // parfois la syntaxe change... pour des raisons obscures
-					    	$post['date'] = $match[0];
+						// il peut y avoir d'autres formats de dates, ici ce sont des dates du type Mer 12 Juin 2013 - 8:53
+						if (preg_match('/[A-Za-z]{3,4} [0-9]{1,2} .{3,4} [0-9]{4} ?(-|,) [0-9]{1,2}:[0-9]{2}/', $post['sujet'], $match))
+							$post['date'] = $match[0];
+						elseif(preg_match('/[A-Za-z]{3,4} [0-9]{1,2} .{3,4} ?(-|,) [0-9]{1,2}:[0-9]{2}/', $post['sujet'], $match)) // parfois la syntaxe change... pour des raisons obscures
+							$post['date'] = $match[0];
 
-					    if(!empty($post['date'])){
-					    	$date = str_replace('- ', '', $post['date']);
+						if(!empty($post['date'])){
+							$date = str_replace('- ', '', $post['date']);
 							$date = explode(' ', $date);
 							$newstr = '';
 
 							foreach ($date as $key => $value) {
 								if($key != 0){ 
 									if($key == 2) // les mois
-										foreach ($mois as $fr => $en)
-											if($value == $fr)
-												$value = $en;
-									$newstr .= ' '.$value;
+									foreach ($mois as $fr => $en)
+										if($value == $fr)
+											$value = $en;
+										$newstr .= ' '.$value;
 								}
 							}
 							$post['date'] = strtotime($newstr);
-					    }
+						}
 
-					    $post['premierpost'] = 0;
+						$post['premierpost'] = 0;
 						if(isset($ancienpost) || empty($topic['titre'])){ // c'est la première fois qu'on traite cette page
-						    $current_topic = trim($html->find('h1.cattitle', 0)->plaintext, "&nbsp; ");
-						    if(!empty($topic['titre']) && $current_topic != $topic['titre']){ // c'est n'est PAS une page d'un topic déjà existant, on envoi sur la bdd le topic puis on ré-initialise
-						    	$post['premierpost'] = 1;
-						    	$topic['pseudo_auteur_dernier'] = $ancienpost['auteur'];
-	 							$topic['id_auteur_dernier'] = $ancienpost['id_membre'];
-	 							$topic['date_auteur_dernier'] = $ancienpost['date'];
-	 							// expédition sur la bdd du topic achevé
-						    	$topic['id'] = insert_topic($topic, $pdo) +1; // ne pas oublier que si la boucle n'est pas redémarrée (qu'on atteind la fin de la liste) il faudra quand même poster le topic !
-						    	echo 'Topic '.$topic['titre'].'<br />';
-						    }
-						    $post['premierpost'] = 1;
-						    // création du topic sur lequel on va travailler
-						    $topic = array('id' => $topic['id'], 'titre' => $current_topic, 'localisation' => $localisation, 'nb_messages' => 0, 'id_message_premier' => 0, 'pseudo_auteur_premier' => $post['auteur'], 'id_auteur_premier' => $post['id_membre'], 'date_auteur_premier' => $post['date'], 'pseudo_auteur_dernier' => '', 'id_auteur_dernier' => 0, 'date_auteur_dernier' => 0);
-						    $ancienpost = null;
+							$current_topic = trim($html->find('h1.cattitle', 0)->plaintext, "&nbsp; ");
+								if(!empty($topic['titre']) && $current_topic != $topic['titre']){ // c'est n'est PAS une page d'un topic déjà existant, on envoi sur la bdd le topic puis on ré-initialise
+									$post['premierpost'] = 1;
+									$topic['pseudo_auteur_dernier'] = $ancienpost['auteur'];
+									$topic['id_auteur_dernier'] = $ancienpost['id_membre'];
+									$topic['date_auteur_dernier'] = $ancienpost['date'];
+		 							// expédition sur la bdd du topic achevé
+									$topic['id'] = insert_topic($topic, $pdo) +1; // ne pas oublier que si la boucle n'est pas redémarrée (qu'on atteind la fin de la liste) il faudra quand même poster le topic !
+									echo 'Topic '.$topic['titre'].'<br />';
+							}
+							$post['premierpost'] = 1;
+							// création du topic sur lequel on va travailler
+							$topic = array('id' => $topic['id'], 'titre' => $current_topic, 'localisation' => $localisation, 'nb_messages' => 0, 'id_message_premier' => 0, 'pseudo_auteur_premier' => $post['auteur'], 'id_auteur_premier' => $post['id_membre'], 'date_auteur_premier' => $post['date'], 'pseudo_auteur_dernier' => '', 'id_auteur_dernier' => 0, 'date_auteur_dernier' => 0);
+							$ancienpost = null;
 						} elseif(empty($post['date']))
 							$post['date'] = $ancienpost['date'] + rand(66, 666); // si jamais on arrive vraiment pas à définir une date on la définie comme étant approximativement proche du dernier post (si c'est sur un même sujet)
-						
+
 						if(empty($post['date'])) // sinon 1er janvier 1970 =/
-							$post['date'] = 0;
+						$post['date'] = 0;
 
-					   	$post['message'] = html_to_bbcode($message);
-					    $post['topic_id'] = $topic['id'];
-					    
-					    if($post['premierpost'] === 1)
-					    	$topic['id_message_premier'] = insert_post($post, $pdo);
-					    else
-					    	insert_post($post, $pdo);
-					    $topic['nb_messages'] += 1;
+						$post['message'] = html_to_bbcode($message);
+						$post['topic_id'] = $topic['id'];
 
-				    }
+						if($post['premierpost'] === 1)
+							$topic['id_message_premier'] = insert_post($post, $pdo);
+						else
+							insert_post($post, $pdo);
+						$topic['nb_messages'] += 1;
+
+					}
 				}
 			}
-        }
-        closedir($dh);
-        $topic['pseudo_auteur_dernier'] = $post['auteur'];
-	 	$topic['id_auteur_dernier'] = $post['id_membre'];
-	 	$topic['date_auteur_dernier'] = $post['date'];
-        insert_topic($topic, $pdo);
-    }
+		}
+		closedir($dh);
+		$topic['pseudo_auteur_dernier'] = $post['auteur'];
+		$topic['id_auteur_dernier'] = $post['id_membre'];
+		$topic['date_auteur_dernier'] = $post['date'];
+		insert_topic($topic, $pdo);
+	}
 }
 $time_end = microtime(true);
 $time = $time_end - $time_start;
